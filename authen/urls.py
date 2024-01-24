@@ -11,7 +11,7 @@ from authen.views import (
 
 urlpatterns = [
     path('signup', UserSignUp.as_view()),
-    path('sigin', UserSignIn.as_view()),
+    path('signin', UserSignIn.as_view()),
     path('user', UserProfile.as_view()),
     path('password_change', change_password),
     path('password/reset', RequestPasswordRestEmail.as_view()),
