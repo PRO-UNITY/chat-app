@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+
+          script: |
+            cd /var/www/todo-backend 
+            git pull
+            source env/bin/activate
+            python3 -m pip install -r requirements.txt
+            python3 manage.py migrate
+            deactivate
+            sudo systemctl start todo-app.socket
+            sudo systemctl enable todo-app.socket
+            sudo systemctl daemon-reload
+            sudo systemctl restart gunicorn
+            echo "Deployed at BackEnd"
