@@ -55,11 +55,25 @@ class UserSignUp(APIView):
         responses={201: "Created - Item created successfully",},
         tags=["auth"],)
     def post(self, request):
-        serializer = UserSignUpSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        username = request.data.get("username", "")
+        email = request.data.get("email", "")
+        password = request.data.get("password", "")
+        confirm_password = request.data.get('confirm_password', "")
+        first_name = request.data.get('first_name', "")
+        last_name = request.data.get('last_name', "")
+        if not username or not email or not password or not confirm_password:
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "User with this username already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "User with this email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+        if password != confirm_password:
+            return Response({"error": "Password and Confirm Password do not match"}, status=status.HTTP_400_BAD_REQUEST)
+        my_user = User.objects.create(username=username, email=email, first_name=first_name, last_name=last_name)
+        my_user.set_password(password)
+        my_user.save()
+        token = get_token_for_user(my_user)
+        return Response({"token": token}, status=status.HTTP_201_CREATED)
 
 
 class UserSignIn(APIView):
