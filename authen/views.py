@@ -3,6 +3,7 @@ from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from drf_yasg.utils import swagger_auto_schema
@@ -28,6 +29,7 @@ from authen.serializers import (
     ChangePasswordSerializer,
     ResetPasswordSerializer,
     PasswordResetCompleteSerializer,
+    UserUpdateSerializer,
 )
 
 User = get_user_model()
@@ -114,7 +116,36 @@ class UserProfile(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"error": "The user is not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    @action(methods=['put'], detail=True)
+    @swagger_auto_schema(
+        request_body=UserUpdateSerializer,
+        responses={201: "update - Item update successfully",},
+        tags=["auth"],)
+    def put(self, request, *args, **kwarg):
+        if request.user.is_authenticated:
+            expected_fields = set(["id", "first_name", "last_name", "email",])
+            received_fields = set(request.data.keys())
+            unexpected_fields = received_fields - expected_fields
+            if unexpected_fields:
+                error_message = (f"Unexpected fields in request data: {', '.join(unexpected_fields)}")
+                return Response({"error": error_message}, status=status.HTTP_400_BAD_REQUEST)
+            queryset = get_object_or_404(User, id=request.user.id)
+            serializer = UserUpdateSerializer(context={"request": request}, instance=queryset, data=request.data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({"error": "update error data"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({"error": "The user is not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
+    def delete(self, request):
+        if request.user.is_authenticated:
+            user_delete = User.objects.get(id=request.user.id)
+            user_delete.delete()
+            return Response({"message": "delete success"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "The user is not logged in"}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])

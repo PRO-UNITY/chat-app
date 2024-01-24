@@ -45,12 +45,9 @@ class UserSignUpSerializer(serializers.ModelSerializer):
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField(max_length=None, use_url=True)
     first_name = serializers.CharField(max_length=50, validators=[
-            MinLengthValidator(limit_value=5, message="First name must be at least 5 characters."),
             MaxLengthValidator(limit_value=50, message="First name cannot exceed 50 characters."),],)
     last_name = serializers.CharField(max_length=50, validators=[
-            MinLengthValidator(limit_value=5, message="Last name must be at least 5 characters."),
             MaxLengthValidator(limit_value=50, message="Last name cannot exceed 50 characters."),],)
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
 
