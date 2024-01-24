@@ -185,14 +185,14 @@ SWAGGER_SETTINGS = {
             "in": "header",
         }
     },
-    "TITLE": "Food delivery",
-    "DESCRIPTION": "Food Delivery back-end",
+    "TITLE": "CHAT project",
+    "DESCRIPTION": "Chat project back-end",
     "VERSION": "0.1.0",
     "USE_SESSION_AUTH": False,
 }
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Food-delivery API",
-    "DESCRIPTION": "Food-delivery back-end",
+    "TITLE": "Chat project API",
+    "DESCRIPTION": "chat project back-end",
     "VERSION": "0.1.0",
 }
 
