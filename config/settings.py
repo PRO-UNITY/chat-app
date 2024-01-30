@@ -29,11 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "corsheaders",
-    "rest_framework_simplejwt",
-    "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
     "drf_yasg",
-    "authen",
     "chat",
 ]
 SITE_ID = 1
@@ -76,7 +73,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "twitter_app",
+        "NAME": "chat",
         "USER": "postgres",
         "PASSWORD": "1",
         "HOST": "127.0.0.1",
@@ -143,28 +140,6 @@ REST_FRAMEWORK = {
 }
 
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'ALLOWED_HOSTS': ['*'],
-    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME_CLAIM': 'exp',
-    'SLIDING_TOKEN_REFRESH_LIFETIME_CLAIM': 'refresh_exp',
-    'AUTH_COOKIE_SECURE': False,
-    'AUTH_COOKIE_SAMESITE': None,
-    'AUTH_COOKIE_SECURE': False,
-}
-
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -196,8 +171,6 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "0.1.0",
 }
 
-REST_USE_JWT = True
-JWT_AUTH = {"JWT_RESPONSE_PAYLOAD_HANDLER": "authentification.utils.jwt_response_payload_handler"}
 
 
 AUTHENTICATION_BACKENDS = [
@@ -205,3 +178,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 FORCE_SCRIPT_NAME = "/chat"
+
+BASE_URL = "https://register-app.prounity.uz/api/auth/user"

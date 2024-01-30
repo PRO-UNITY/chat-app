@@ -1,11 +1,10 @@
 from django.db import models
-from django.db import models
 from django.conf import settings
 
 
 class Conversation(models.Model):
-    initiator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='convo_starter')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='convo_participant')
+    initiator = models.CharField(max_length=250, null=True, blank=True)
+    receiver = models.CharField(max_length=250, null=True, blank=True)
     start_time = models.DateTimeField(auto_now_add=True, verbose_name='Time stamp', null=True, blank=True)
 
     class Meta:
@@ -14,7 +13,7 @@ class Conversation(models.Model):
         verbose_name_plural = "Conversation"
 
 class Message(models.Model):
-      sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='message_sender')
+      sender = models.CharField(max_length=250, null=True, blank=True)
       text = models.CharField(max_length=200, blank=True, verbose_name='Text')
       attachment = models.FileField(blank=True, null=True, verbose_name='File Uploaded')
       conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE, verbose_name='Conversation Identity', null=True, blank=True)

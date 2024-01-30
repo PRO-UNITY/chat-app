@@ -1,14 +1,11 @@
-from django.contrib.auth.models import User
+import requests
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from authen.renderers import UserRenderers
-from django.contrib.auth.models import User
+from rest_framework.filters import SearchFilter
+from chat.microservise import user_permission
 from chat.models import (
     Conversation,
     Message
@@ -20,35 +17,75 @@ from chat.serializers import (
 
 
 class StartConversationView(APIView):
-    render_classes = [UserRenderers]
-    perrmisson_class = [IsAuthenticated]
+    filter_backends = [SearchFilter]
+    search_fields = ['username']
 
-    def post(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_401_UNAUTHORIZED)
-        data = request.data
-        username = data['username']
+    BASE_URL = "https://register-app.prounity.uz/api/auth/users"
+
+    def make_request(self, url, request):
         try:
-            participant = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response({'message': 'You cannot chat with a non existent user'})
+            headers = {'Authorization': request.headers.get('Authorization')}
+            
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as e:
+            return {"error": str(e)}
 
-        conversation = Conversation.objects.filter(Q(initiator=request.user, receiver=participant) |
-                                                   Q(initiator=participant, receiver=request.user))
+    @user_permission
+    def get(self, request, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        url = f"{self.BASE_URL}"
+        data = self.make_request(url, request)
+
+        username = request.query_params.get("username", None)
+        queryset = self.filter_queryset(data.get("results", []), username)
+
+        if not queryset:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(queryset, status=status.HTTP_200_OK)
+
+    @user_permission
+    def post(self, request, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        url = f"{self.BASE_URL}"
+        data = self.make_request(url, request)
+        d = request.data
+
+        username = d.get("username", None)
+        queryset = self.filter_queryset(data.get("results", []), username)
+
+        if not queryset:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        participant = queryset[0]
+        conversation = self.get_or_create_conversation(usr, participant['username'])
+        return conversation
+
+    def filter_queryset(self, data, username):
+        return [user for user in data if not username or username.lower() in user.get("username", "").lower()]
+
+    def get_or_create_conversation(self, usr, participant_id):
+        conversation = Conversation.objects.filter(Q(initiator=usr, receiver=participant_id) |
+                                                   Q(initiator=participant_id, receiver=usr))
+
         if conversation.exists():
-            return Response({"message": "Conversation already exists"}, status=status.HTTP_200_OK)
+            return Response({"message": "Conversation already exists"}, status=status.HTTP_302_FOUND)
         else:
-            conversation = Conversation.objects.create(initiator=request.user, receiver=participant)
+            conversation = Conversation.objects.create(initiator=usr, receiver=participant_id)
             return Response(ConversationSerializer(instance=conversation).data, status=status.HTTP_200_OK)
 
 
 class GetConversationView(APIView):
-    render_classes = [UserRenderers]
     filterset_fields = ["text"]
 
-    def get(self, request, convo_id):
-        if not request.user.is_authenticated:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_401_UNAUTHORIZED)
+    @user_permission
+    def get(self, request, convo_id, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         text = request.query_params.get("text", None)
         if text:
@@ -67,13 +104,13 @@ class GetConversationView(APIView):
         serializer = ConversationSerializer(conversation, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-    def put(self, request, convo_id):
-        if not request.user.is_authenticated:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_401_UNAUTHORIZED)
+    @user_permission
+    def put(self, request, convo_id, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         conversation = get_object_or_404(Conversation, id=convo_id)
         serializer = MessageSerializer(data=request.data, context={
-            "request": request,
+            "request": usr,
             "conversation": conversation
         })
         if serializer.is_valid(raise_exception=True):
@@ -83,13 +120,14 @@ class GetConversationView(APIView):
 
 
 class ConversationView(APIView):
-    render_classes = [UserRenderers]
 
-    def get(self, request):
-        if not request.user.is_authenticated:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_401_UNAUTHORIZED)
-        conversation_list = Conversation.objects.filter(Q(initiator=request.user) |
-                                                        Q(receiver=request.user))
+    @user_permission
+    def get(self, request, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        conversation_list = Conversation.objects.filter(Q(initiator=usr) |
+                                                        Q(receiver=usr))
         serializer = ConversationListSerializer(instance=conversation_list, many=True)
         # serializer = super().page(conversation_list, ConversationListSerializer, request)
 
@@ -97,11 +135,9 @@ class ConversationView(APIView):
 
 
 class DeleteChatSMSView(APIView):
-    render_classes = [UserRenderers]
-    permission = [IsAuthenticated]
 
-    def delete(self, request, pk):
-        if not request.user.is_authenticated:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_401_UNAUTHORIZED)
+    def delete(self, request, pk, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         queryset = get_object_or_404(Message, id=pk).delete()
         return Response({'msg': "Message Deleted successfully"}, status=status.HTTP_200_OK)
