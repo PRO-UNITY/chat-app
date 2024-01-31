@@ -208,3 +208,5 @@ AUTHENTICATION_BACKENDS = [
 # FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://register-app.prounity.uz/api/auth/user"
+
+# dd
