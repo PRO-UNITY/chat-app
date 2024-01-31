@@ -78,7 +78,7 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "chat",
+        "NAME": "chat_app",
         "USER": "postgres",
         "PASSWORD": "1",
         "HOST": "127.0.0.1",
