@@ -205,8 +205,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# FORCE_SCRIPT_NAME = "/chat"
+FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://register-app.prounity.uz/api/auth/user"
-
-# dd
