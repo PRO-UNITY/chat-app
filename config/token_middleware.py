@@ -1,4 +1,5 @@
 from channels.db import database_sync_to_async
+import requests
 from channels.middleware import BaseMiddleware
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,29 +9,32 @@ from django.contrib.auth.models import User
 
 
 
-@database_sync_to_async
-def get_user(token_key):
-    try:
-        if token_key is None:
-            token_key = False
-            return token_key
-        access_token_obj = AccessToken(token_key)
-        user_id = access_token_obj['user_id']
-        user = User.objects.get(id=user_id)
-        return user
-    except ObjectDoesNotExist:
-        print(1)
-        return 1
+API_URL = "https://api.prounity.uz/auth/user"
 
+@database_sync_to_async
+def get_user(token):
+    if not token:
+        return None
+
+    try:
+        headers = {'Authorization': f'Bearer {token}'}
+        response = requests.get(API_URL, headers=headers)
+        response.raise_for_status()
+        user_data = response.json()
+        user = user_data.get('username')
+        return user
+    except requests.exceptions.RequestException as e:
+        return None
 
 class TokenAuthMiddleware(BaseMiddleware):
-    def __init__(self, inner):
-        self.inner = inner
-
     async def __call__(self, scope, receive, send):
-        token_key = scope['query_string'].decode().split('=')[-1]
-        if bool(token_key):
+        headers = dict(scope.get('headers', []))
+        authorization_header = headers.get(b'authorization', b'').decode('utf-8')
+
+        if authorization_header.startswith('Bearer '):
+            token_key = authorization_header.split(' ')[1]
             scope['user'] = await get_user(token_key)
-            return await super().__call__(scope, receive, send)
-        scope['user'] = await get_user(None)
+        else:
+            scope['user'] = None
+
         return await super().__call__(scope, receive, send)

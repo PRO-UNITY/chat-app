@@ -8,7 +8,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', "sender", 'text', 'conversation_id', 'timestamp']
+        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp']
 
     def create(self, validated_data):
         sender = self.context.get('request')
@@ -47,7 +47,7 @@ class MessageListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'text', 'sender_type', 'timestamp']
+        fields = ['id', 'sender', 'text', 'sender_type', "is_read", 'timestamp']
 
     def get_sender_type(self, obj):
         user = obj.sender
