@@ -20,7 +20,7 @@ class StartConversationView(APIView):
     filter_backends = [SearchFilter]
     search_fields = ['username']
 
-    BASE_URL = "https://register-app.prounity.uz/auth/users"
+    BASE_URL = "https://api.prounity.uz/auth/users"
 
     def make_request(self, url, request):
         try:
