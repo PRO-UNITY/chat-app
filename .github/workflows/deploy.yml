@@ -15,8 +15,9 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
 
           script: |
-            cd /var/www/chat-app 
+            cd /var/www/chat-app
             git pull
+            cd /var/www/chat-app/back-end
             source env/bin/activate
             python3 -m pip install -r requirements.txt
             python3 manage.py migrate
