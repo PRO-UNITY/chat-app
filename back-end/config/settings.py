@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-qfk77*b&m)jgzt3qo%if&*!4y5i5kk(z^=is*dp12%v)3#!j%6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'api.prounity.uz']
 
 
 # Application definition
