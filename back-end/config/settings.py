@@ -204,7 +204,7 @@ SPECTACULAR_SETTINGS = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-
+CSRF_COOKIE_SECURE = True
 # FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://api.prounity.uz/auth/user"
