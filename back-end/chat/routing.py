@@ -10,6 +10,6 @@ from chat.comsumers import (
 
 websocket_urlpatterns = [
     path('ws/chat/<int:room_name>/', ChatConsumer.as_asgi()),
-    path('ws/message/<int:room_name>/', ChatMessage.as_asgi()),
+    path('ws/message/', ChatMessage.as_asgi()),
 
 ]

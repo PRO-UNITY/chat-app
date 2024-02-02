@@ -40,6 +40,8 @@ class StartConversationView(APIView):
         data = self.make_request(url, request)
 
         username = request.query_params.get("username", None)
+        if not username:
+            return Response([], status=status.HTTP_200_OK)
         queryset = self.filter_queryset(data.get("results", []), username)
 
         if not queryset:

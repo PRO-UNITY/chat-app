@@ -117,28 +117,23 @@ class ChatConsumer(WebsocketConsumer):
 
 class ChatMessage(WebsocketConsumer):
     def connect(self):
-
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
 
+        async_to_sync(self.channel_layer.group_add)(
             self.room_group_name, self.channel_name
         )
         self.accept()
 
     def disconnect(self, close_code):
-        # Leave room group
-
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
     
-
     @database_sync_to_async
     def get_messages_for_room(self, room_id):
         try:
-            conversation = Conversation.objects.get(id=room_id)
+            conversation = Conversation.objects.get(id=int(self.room_name))
             messages = Message.objects.filter(conversation_id=conversation)
             return messages
         except ObjectDoesNotExist:
@@ -146,11 +141,17 @@ class ChatMessage(WebsocketConsumer):
             return []
 
     async def get_and_send_messages(self):
-        # Retrieve messages for the room
         room_messages = await self.get_messages_for_room(self.room_name)
-
-        # Serialize the messages
         messages_data = [MessageSerializer(instance=msg).data for msg in room_messages]
 
-        # Send the list of messages to the connected clients
         await self.send(text_data=json.dumps({"type": "room_messages", "messages": messages_data}))
+    
+    def chat_message(self, event):
+        dict_to_be_sent = event.copy()
+        dict_to_be_sent.pop("type")
+
+        self.send(
+            text_data=json.dumps(
+                dict_to_be_sent
+            )
+        )
