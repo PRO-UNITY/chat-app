@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'config.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = "config.asgi.application"
 
 
@@ -125,7 +125,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_URL = "/food-delivery/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn")
 MEDIA_URL = "/food-delivery/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "/home/ibrokhim/Desktop/projects1/media")
+# MEDIA_ROOT = os.path.join(BASE_DIR, "/home/ibrokhim/Desktop/projects1/media")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
