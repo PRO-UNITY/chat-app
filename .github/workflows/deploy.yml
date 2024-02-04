@@ -22,8 +22,8 @@ jobs:
             python3 -m pip install -r requirements.txt
             python3 manage.py migrate
             deactivate
-            sudo systemctl start live.socket
-            sudo systemctl enable live.socket
+            sudo systemctl start my-project.socket
+            sudo systemctl enable my-project.socket
             sudo systemctl daemon-reload
-            sudo systemctl restart live
+            sudo systemctl restart my-project
             echo "Deployed at BackEnd"

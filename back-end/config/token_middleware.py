@@ -1,12 +1,6 @@
 from channels.db import database_sync_to_async
 import requests
 from channels.middleware import BaseMiddleware
-from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework_simplejwt.tokens import AccessToken
-
-from django.contrib.auth.models import User
-
 
 
 API_URL = "https://api.prounity.uz/auth/user"
