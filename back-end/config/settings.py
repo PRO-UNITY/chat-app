@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
+# WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = "config.asgi.application"
 
 # Database
@@ -174,10 +174,10 @@ SPECTACULAR_SETTINGS = {
 
 
 
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',
-# ]
-CSRF_COOKIE_SECURE = True
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+# CSRF_COOKIE_SECURE = True
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
 FORCE_SCRIPT_NAME = "/chat"
 
