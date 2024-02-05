@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-d8jzy8xp1f9#rixix31#2x5@&h3fx^nxau%o0u98mazj-jzwye
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://api.prounity.uz', 'http://api.prounity.uz', 'api.prounity.uz']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -181,6 +181,6 @@ CSRF_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = None  # Allows cross-site requests
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
-FORCE_SCRIPT_NAME = "/chat"
+# FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://api.prounity.uz/auth/user"
