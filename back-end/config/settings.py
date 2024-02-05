@@ -174,12 +174,9 @@ SPECTACULAR_SETTINGS = {
 
 
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
-CSRF_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = None  # Allows cross-site requests
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
 # FORCE_SCRIPT_NAME = "/chat"
 
