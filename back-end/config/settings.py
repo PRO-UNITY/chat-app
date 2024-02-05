@@ -141,6 +141,7 @@ REST_FRAMEWORK = {
 
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
+
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -174,9 +175,9 @@ SPECTACULAR_SETTINGS = {
 
 
 
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',
-# ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
 # FORCE_SCRIPT_NAME = "/chat"
 
