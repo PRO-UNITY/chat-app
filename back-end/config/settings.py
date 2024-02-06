@@ -68,7 +68,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-# ASGI_APPLICATION = "config.asgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -178,6 +178,6 @@ SPECTACULAR_SETTINGS = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-FORCE_SCRIPT_NAME = "/chat"
+# FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://api.prounity.uz/auth/user"

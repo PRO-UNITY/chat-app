@@ -5,10 +5,10 @@ from chat.models import Conversation, Message
 
 class MessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True)
-
+    sender_type = serializers.SerializerMethodField()
     class Meta:
         model = Message
-        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp']
+        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp', 'sender_type']
 
     def create(self, validated_data):
         sender = self.context.get('request')
@@ -33,6 +33,17 @@ class MessageSerializer(serializers.ModelSerializer):
         #             user=create_message.conversation_id.initiator,
         #         )
         return create_message
+    
+    def get_sender_type(self, obj):
+        user = obj.sender
+        if user:
+            conversation = obj.conversation_id
+
+            if conversation.initiator == user:
+                return 'initiator'
+            elif conversation.receiver == user:
+                return 'receiver'
+        return 'unknown'
 
 
 class ConversationListSerializer(serializers.ModelSerializer):

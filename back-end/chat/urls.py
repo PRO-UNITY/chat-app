@@ -3,6 +3,7 @@ from django.urls import path
 from chat.views import (
     StartConversationView,
     ConversationView,
+    GetMessagesView,
     GetConversationView,
     DeleteChatSMSView,
 )
@@ -13,6 +14,7 @@ urlpatterns = [
     # get room on initiator and receiver
     path('rooms', ConversationView.as_view(), name='conversations'),
     # get conversation  all messages
+    path('messages/<int:convo_id>', GetMessagesView.as_view()),
     path('conversation/<int:convo_id>', GetConversationView.as_view(), name='get_conversation'),
 
     path('message_delete/<int:pk>', DeleteChatSMSView.as_view()),

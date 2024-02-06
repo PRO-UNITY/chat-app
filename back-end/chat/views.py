@@ -15,6 +15,9 @@ from chat.serializers import (
     ConversationSerializer, MessageSerializer, MessageListSerializer
 )
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 
 class StartConversationView(APIView):
     filter_backends = [SearchFilter]
@@ -81,6 +84,31 @@ class StartConversationView(APIView):
             return Response(ConversationSerializer(instance=conversation).data, status=status.HTTP_200_OK)
 
 
+class GetMessagesView(APIView):
+    filterset_fields = ["text"]
+
+    @user_permission
+    def get(self, request, convo_id, user_id=None, usr=None):
+        if user_id is None:
+            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        text = request.query_params.get("text", None)
+        if text:
+            conversation = Message.objects.select_related('conversation_id').filter(
+                Q(conversation_id=convo_id), Q(text__icontains=text)
+            )
+            page = self.paginate_queryset(conversation)
+            serializer = MessageListSerializer(conversation, many=True, context={'request': request})
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        conversation = get_object_or_404(Conversation, id=convo_id)
+        messages = conversation.message_set.all()  # Retrieve all messages for the conversation
+        # page = self.paginate_queryset(messages)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class GetConversationView(APIView):
     filterset_fields = ["text"]
 
@@ -104,6 +132,10 @@ class GetConversationView(APIView):
         # page = self.paginate_queryset(messages)
 
         serializer = ConversationSerializer(conversation, context={'request': request})
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'notification'
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @user_permission

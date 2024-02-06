@@ -20,6 +20,7 @@ def get_user(token):
     except requests.exceptions.RequestException as e:
         return None
 
+
 class TokenAuthMiddleware(BaseMiddleware):
     async def __call__(self, scope, receive, send):
         headers = dict(scope.get('headers', []))
