@@ -175,9 +175,9 @@ SPECTACULAR_SETTINGS = {
 
 
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
 # FORCE_SCRIPT_NAME = "/chat"
 
