@@ -179,6 +179,6 @@ SPECTACULAR_SETTINGS = {
 #     'django.contrib.auth.backends.ModelBackend',
 # ]
 # FORCE_SCRIPT_NAME = ("/chat", "/ws")
-# FORCE_SCRIPT_NAME = "/chat"
+FORCE_SCRIPT_NAME = "/chat"
 
 BASE_URL = "https://api.prounity.uz/auth/user"
