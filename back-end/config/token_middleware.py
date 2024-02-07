@@ -22,14 +22,26 @@ def get_user(token):
 
 
 class TokenAuthMiddleware(BaseMiddleware):
+    def __init__(self, inner):
+        self.inner = inner
+
     async def __call__(self, scope, receive, send):
-        headers = dict(scope.get('headers', []))
-        authorization_header = headers.get(b'authorization', b'').decode('utf-8')
-
-        if authorization_header.startswith('Bearer '):
-            token_key = authorization_header.split(' ')[1]
+        token_key = scope['query_string'].decode().split('=')[-1]
+        if bool(token_key):
             scope['user'] = await get_user(token_key)
-        else:
-            scope['user'] = None
-
+            return await super().__call__(scope, receive, send)
+        scope['user'] = await get_user(None)
         return await super().__call__(scope, receive, send)
+
+# class TokenAuthMiddleware(BaseMiddleware):
+#     async def __call__(self, scope, receive, send):
+#         headers = dict(scope.get('headers', []))
+#         authorization_header = headers.get(b'authorization', b'').decode('utf-8')
+
+#         if authorization_header.startswith('Bearer '):
+#             token_key = authorization_header.split(' ')[1]
+#             scope['user'] = await get_user(token_key)
+#         else:
+#             scope['user'] = None
+
+#         return await super().__call__(scope, receive, send)

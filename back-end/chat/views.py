@@ -84,7 +84,7 @@ class StartConversationView(APIView):
             return Response(ConversationSerializer(instance=conversation).data, status=status.HTTP_200_OK)
 
 
-class GetMessagesView(APIView):
+class GetConversationView(APIView):
     filterset_fields = ["text"]
 
     @user_permission
@@ -105,7 +105,7 @@ class GetMessagesView(APIView):
         conversation = get_object_or_404(Conversation, id=convo_id)
         messages = conversation.message_set.all()  # Retrieve all messages for the conversation
         # page = self.paginate_queryset(messages)
-
+        serializer = ConversationSerializer(conversation, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -132,10 +132,6 @@ class GetConversationView(APIView):
         # page = self.paginate_queryset(messages)
 
         serializer = ConversationSerializer(conversation, context={'request': request})
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            'notification'
-        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @user_permission
