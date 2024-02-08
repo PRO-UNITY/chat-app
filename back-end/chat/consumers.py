@@ -103,7 +103,9 @@ class ChatMessage(AsyncWebsocketConsumer):
         dict_to_be_sent.pop("type")
         sender = self.scope["user"]
         if dict_to_be_sent['sender'] == sender:
+            print('init')
             dict_to_be_sent['sender_type'] = 'initiator'
         else:
+            print('res')
             dict_to_be_sent['sender_type'] = 'receiver'
         await self.send(text_data=json.dumps(dict_to_be_sent))
