@@ -6,10 +6,10 @@ from channels.db import database_sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from django.core.files.base import ContentFile
 from chat.models import Message, Conversation
-from chat.serializers import MessageSerializer, MessageListSerializer, ConversationSerializer
+from chat.serializers import MessageSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from channels.generic.websocket import AsyncWebsocketConsumer
-from chat.microservice import user_permission
+
 
 
 
