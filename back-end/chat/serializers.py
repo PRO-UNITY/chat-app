@@ -10,7 +10,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp', 'type_message']
+        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp']
 
     def create(self, validated_data):
         sender = self.context.get('request')

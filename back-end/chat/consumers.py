@@ -11,9 +11,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-
-
-
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
@@ -44,9 +41,9 @@ class ChatConsumer(WebsocketConsumer):
         if attachment:
             file_str, file_ext = attachment["data"], attachment["format"]
             file_data = ContentFile(base64.b64decode(file_str), name=f"{secrets.token_hex(8)}.{file_ext}")
-            _message = Message.objects.create(sender=sender, attachment=file_data, text=message, conversation_id=conversation, type_message=sender)
+            _message = Message.objects.create(sender=sender, attachment=file_data, text=message, conversation_id=conversation)
         else:
-            _message = Message.objects.create(sender=sender, text=message, conversation_id=conversation, type_message=sender)
+            _message = Message.objects.create(sender=sender, text=message, conversation_id=conversation)
 
         # Send message to room group
         chat_type = {"type": "chat_message"}
