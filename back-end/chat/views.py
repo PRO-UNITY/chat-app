@@ -38,7 +38,7 @@ class StartConversationView(APIView):
     @user_permission
     def get(self, request, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
         url = f"{self.BASE_URL}"
         data = self.make_request(url, request)
 
@@ -55,7 +55,7 @@ class StartConversationView(APIView):
     @user_permission
     def post(self, request, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
         url = f"{self.BASE_URL}"
         data = self.make_request(url, request)
         d = request.data
@@ -90,7 +90,7 @@ class GetConversationView(APIView):
     @user_permission
     def get(self, request, convo_id, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
 
         text = request.query_params.get("text", None)
         if text:
@@ -115,7 +115,7 @@ class GetConversationView(APIView):
     @user_permission
     def get(self, request, convo_id, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
 
         text = request.query_params.get("text", None)
         if text:
@@ -137,7 +137,7 @@ class GetConversationView(APIView):
     @user_permission
     def put(self, request, convo_id, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
         conversation = get_object_or_404(Conversation, id=convo_id)
         serializer = MessageSerializer(data=request.data, context={
             "request": usr,
@@ -154,7 +154,7 @@ class ConversationView(APIView):
     @user_permission
     def get(self, request, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
 
         conversation_list = Conversation.objects.filter(Q(initiator=usr) |
                                                         Q(receiver=usr))
@@ -168,6 +168,6 @@ class DeleteChatSMSView(APIView):
 
     def delete(self, request, pk, user_id=None, usr=None):
         if user_id is None:
-            return Response({"error": "Invalid user data"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Invalid user data"}, status=status.HTTP_401_UNAUTHORIZED)
         queryset = get_object_or_404(Message, id=pk).delete()
         return Response({'msg': "Message Deleted successfully"}, status=status.HTTP_200_OK)

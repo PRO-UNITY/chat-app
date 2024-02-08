@@ -32,4 +32,4 @@ def fetch_user_data(token):
         return user_data, None
     except requests.RequestException as e:
         error_message = f"Error fetching user data: {str(e)}"
-        return None, Response({"error": error_message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return None, Response({"error": error_message}, status=status.HTTP_401_UNAUTHORIZED)

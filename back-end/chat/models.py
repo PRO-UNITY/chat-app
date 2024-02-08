@@ -17,13 +17,11 @@ class Message(models.Model):
       sender = models.CharField(max_length=250, null=True, blank=True)
       text = models.CharField(max_length=200, blank=True, verbose_name='Text')
       attachment = models.FileField(blank=True, null=True, verbose_name='File Uploaded')
-      type = models.CharField(max_length=250, null=True, blank=True)
+      type_message = models.CharField(max_length=250, null=True, blank=True)
       conversation_id = models.ForeignKey(Conversation, on_delete=models.CASCADE, verbose_name='Conversation Identity', null=True, blank=True)
       timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Time stamp', null=True, blank=True)
       is_read = models.BooleanField(default=False, verbose_name='Is Read')  # New field for read status
 
-      def __str__(self):
-           return self.sender
       
       class Meta:
             ordering = ('-timestamp',)

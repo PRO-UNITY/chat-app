@@ -1,15 +1,16 @@
 from rest_framework import serializers
 from chat.models import Conversation, Message
+from chat.microservice import user_permission
 
 
 
 class MessageSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True)
-
+    # sender_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp']
+        fields = ['id', "sender", 'text', 'conversation_id', "is_read", 'timestamp', 'type_message']
 
     def create(self, validated_data):
         sender = self.context.get('request')
@@ -20,6 +21,14 @@ class MessageSerializer(serializers.ModelSerializer):
         create_message.conversation_id = conversation
         create_message.save()
         return create_message
+
+    def get_sender_type(self, obj):
+        user = self.context.get('request')
+        sender = obj.sender
+        if sender:
+            return 'ini' 
+        else:
+            return 'res'
 
     
 
