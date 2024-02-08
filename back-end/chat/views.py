@@ -105,7 +105,7 @@ class GetConversationView(APIView):
         conversation = get_object_or_404(Conversation, id=convo_id)
         messages = conversation.message_set.all()  # Retrieve all messages for the conversation
         # page = self.paginate_queryset(messages)
-        serializer = ConversationSerializer(conversation, context={'request': request})
+        serializer = ConversationSerializer(conversation, context={'request': usr})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -123,7 +123,7 @@ class GetConversationView(APIView):
                 Q(conversation_id=convo_id), Q(text__icontains=text)
             )
             page = self.paginate_queryset(conversation)
-            serializer = MessageListSerializer(conversation, many=True, context={'request': request})
+            serializer = MessageListSerializer(conversation, many=True, context={'request': usr})
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -131,7 +131,7 @@ class GetConversationView(APIView):
         messages = conversation.message_set.all()  # Retrieve all messages for the conversation
         # page = self.paginate_queryset(messages)
 
-        serializer = ConversationSerializer(conversation, context={'request': request})
+        serializer = ConversationSerializer(conversation, context={'request': usr})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @user_permission
@@ -158,7 +158,7 @@ class ConversationView(APIView):
 
         conversation_list = Conversation.objects.filter(Q(initiator=usr) |
                                                         Q(receiver=usr))
-        serializer = ConversationListSerializer(instance=conversation_list, many=True)
+        serializer = ConversationListSerializer(instance=conversation_list, many=True, context={"request": usr})
         # serializer = super().page(conversation_list, ConversationListSerializer, request)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
