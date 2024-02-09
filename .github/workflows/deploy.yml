@@ -19,7 +19,9 @@ jobs:
             git pull
             cd /var/www/chat-app/back-end
             source env/bin/activate
+            
             python3 -m pip install -r requirements.txt
+            python3 manage.py makemigrations chat
             python3 manage.py migrate
             deactivate
             sudo systemctl start my-project.socket
