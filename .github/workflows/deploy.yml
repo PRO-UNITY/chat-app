@@ -24,8 +24,12 @@ jobs:
             python3 manage.py makemigrations chat
             python3 manage.py migrate
             deactivate
-            sudo systemctl start my-project.socket
-            sudo systemctl enable my-project.socket
+            sudo systemctl start chat.socket
+            sudo systemctl enable chat.socket
             sudo systemctl daemon-reload
-            sudo systemctl restart my-project
+            sudo systemctl restart chat
+            sudo systemctl start daphne.socket
+            sudo systemctl enable daphne.socket
+            sudo systemctl daemon-reload
+            sudo systemctl restart daphne
             echo "Deployed at BackEnd"
