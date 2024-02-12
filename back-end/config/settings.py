@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "chat",
 ]
 
+
 SITE_ID = 1
 
 
